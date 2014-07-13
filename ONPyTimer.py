@@ -1,5 +1,6 @@
 
 from time import *
+import sys
 
 class ONPyTimer(object):
 	'''	
@@ -18,6 +19,8 @@ class ONPyTimer(object):
 		... 								   # from flag 'A'
 		...
 		ONPyTimer.check(flags=['A', 'B']) # will show time diff from flags 'A' and 'B'
+		...
+		ONPyTimer.check(flags=['A'], output=f) # will write time diff from flag 'A' to file 'f'
 
 		================================
 
@@ -29,7 +32,7 @@ class ONPyTimer(object):
 	__measures = {}
 
 	@staticmethod
-	def check(flags=[], flag=None):
+	def check(flags=[], flag=None, output=sys.stdout):
 		'''
 			Time is measured.
 			
@@ -43,19 +46,21 @@ class ONPyTimer(object):
 			of valid flag names.
 
 			If no flags are passed, current time is displayed.
+
+			To print the timer info into a file, pass an opened
+			file as output.
 		'''
 		_time = time()
+		if flags:
+			ONPyTimer.__pretty_print(ONPyTimer.__diff(filter(lambda m: m[0] in flags, ONPyTimer.__measures.items()), _time), output)
+		else:
+			output.write('[-> Current time: %f]\n' % _time)
 		if flag:
 			ONPyTimer.__measures[flag] = _time
-		if flags:
-			ONPyTimer.__pretty_print(ONPyTimer.__diff(filter(lambda m: m[0] in flags, ONPyTimer.__measures.items()), _time))
-		else:
-			print '[-> Current time: %f]' % _time
-		if flag:
-			print '[-> FLAG: %s]' % flag
+			output.write('[-> FLAG: %s]\n' % flag)
 
 	@staticmethod
-	def __pretty_print(measures):
+	def __pretty_print(measures, output):
 		'''
 			Prints in the console the given list
 			of measures.
@@ -64,7 +69,7 @@ class ONPyTimer(object):
 				- diff: time difference
 				- from: from flag name
 		'''
-		print '[-> '+'\n[-> '.join(('%f sec. from %s]' % (m['diff'], m['from']) for m in measures))
+		output.write('[-> ' + '\n[-> '.join(('%f sec. from %s]' % (m['diff'], m['from']) for m in measures)) + '\n')
 
 	@staticmethod
 	def __diff(_from_measures, _to_time):
