@@ -18,6 +18,8 @@ ONPyTimer.check(flag='B', flags=['A']) # will show new flag name and time diff
 ... 								   # from flag 'A'
 ...
 ONPyTimer.check(flags=['A', 'B']) # will show time diff from flags 'A' and 'B'
+...
+ONPyTimer.check(flags=['A'], output=f) # will write time diff from flag 'A' to file 'f'
 ```
 
 Author
